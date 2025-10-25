@@ -132,8 +132,8 @@ col1, col2 = st.columns([0.05, 0.95]) # 5%と95%の幅で2列に分割
 
 # 左の列（アイコン）
 with col1:
-    # アイコンを st.markdown で表示することで、st.success の外に配置
-    st.markdown(ct.DOC_SOURCE_ICON) 
+    # ロボットアイコン (新しく定義した ct.ASSISTANT_ICON を使用)
+    st.markdown(ct.ASSISTANT_ICON)
 
 # 右の列（メッセージボックス）
 with col2:
@@ -141,7 +141,18 @@ with col2:
     st.success(ct.WELCOME_MESSAGE)
 
 # 注意書き (薄黄色の背景: st.warning を使用)
-st.warning(f"{ct.WARNING_ICON} {ct.INPUT_HINT_MESSAGE}")
+# 注意書きも同様にアイコンとメッセージを分離し、配置をウェルカムメッセージと揃える
+col3, col4 = st.columns([0.05, 0.95]) # アイコンとメッセージ本文の列分割
+
+# 左の列（アイコン）
+with col3:
+    # 警告アイコン (ct.WARNING_ICON を使用)
+    st.markdown(ct.WARNING_ICON) 
+
+# 右の列（メッセージボックス）
+with col4:
+    # メッセージのみを st.warning で囲み、薄黄色の背景を維持
+    st.warning(ct.INPUT_HINT_MESSAGE)
 
 
 ############################################################
