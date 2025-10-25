@@ -124,6 +124,22 @@ def get_llm_response(chat_message):
 
     # LLMへのリクエストとレスポンス取得
     llm_response = chain.invoke({"input": chat_message, "chat_history": st.session_state.chat_history})
+    
+    # --- ここから追記 ---
+    import logging
+    logger = logging.getLogger(ct.LOGGER_NAME)
+    
+    # Chainが実際に取得したドキュメントの数とファイル名をログに出力
+    retrieved_docs = llm_response.get('context', [])
+    doc_count = len(retrieved_docs)
+    
+    if doc_count > 0:
+        source_names = [doc.metadata.get('file_name', doc.metadata.get('source', 'Unknown')) for doc in retrieved_docs]
+        logger.info(f"【DEBUG RAG】モード: {st.session_state.mode}. 取得ドキュメント数: {doc_count}. 参照元: {source_names}")
+    else:
+        logger.warning(f"【DEBUG RAG】モード: {st.session_state.mode}. ドキュメントは取得されませんでした。")
+    # --- ここまで追記 ---
+    
     # LLMレスポンスを会話履歴に追加
     st.session_state.chat_history.extend([HumanMessage(content=chat_message), llm_response["answer"]])
 
