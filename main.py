@@ -103,23 +103,30 @@ with st.sidebar:
 
     # モードごとの説明を表示
     if st.session_state.mode == ct.ANSWER_MODE_1:
-        st.markdown(
-            """
-            **【「社内文書検索」を選択した場合】**
-
-            入力内容と関連性が高い**社内文書のありか**を検索できます。
-            **【入力例】** `社員の育成方針に関するMTGの議事録`
-            """
-        )
+        # 社内文書検索モードの説明
+        col_icon, col_text = st.columns([0.05, 0.95]) 
+        
+        with col_icon:
+            st.markdown(ct.DOC_SOURCE_ICON) 
+            
+        with col_text:
+            # --- 変更箇所：タイトルを削除し、st.info()とst.code()で色付けと改行を実施 ---
+            # 説明文（薄青色に相当）
+            st.info("入力内容と関連性が高い社内文書のありかを検索できます。") 
+            # 入力例（薄灰色に相当）
+            st.code("【入力例】 社員の育成方針に関するMTGの議事録", language="markdown") 
+            # ----------------------------------------------------------------------
+        
     elif st.session_state.mode == ct.ANSWER_MODE_2:
-        st.markdown(
-            """
-            **【「社内問い合わせ」を選択した場合】**
+        # 社内問い合わせモードの説明（前回修正済み）
+        col_icon_2, col_text_2 = st.columns([0.05, 0.95]) 
 
-            質問・要望に対して、社内文書の情報をもとに**回答を得られます**。
-            **【入力例】** `人事部に所属している従業員情報を一覧化して`
-            """
-        )
+        with col_icon_2:
+            st.markdown(ct.ASSISTANT_ICON)
+
+        with col_text_2:
+            st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+            st.code("【入力例】 人事部に所属している従業員情報を一覧化して", language="markdown")
 
 # --------------------------------------------------------------------------------
 # 【メイン画面のメッセージ】 (cn.display_initial_ai_message() の内容を置き換え)
