@@ -34,7 +34,7 @@ zstandard==0.23.0
 # Streamlit 関連
 streamlit==1.39.0
 
-# LangChain 関連（互換性のある範囲指定）
+# LangChain 関連
 langchain>=0.3.7,<0.4.0
 langchain-core>=0.3.33,<0.4.0
 langchain-community>=0.3.6,<0.4.0
@@ -42,14 +42,14 @@ langchain-openai>=0.3.3,<0.4.0
 openai>=1.58.1,<2.0.0
 tiktoken==0.7.0
 
-python-docx==0.8.11
+# ChromaDB（更新版）
+chromadb==0.5.3
+pydantic>=2.0
 
-# ... (既存のパッケージリスト)
+# その他
+python-docx==0.8.11
 docx2txt==0.8
 pymupdf==1.24.10
 beautifulsoup4==4.12.3
-chromadb==0.4.6
-# requirements.txt のどこかに追加
 unstructured[all-docs]
-python-docx
 extract-msg
