@@ -71,6 +71,7 @@ def get_llm_response(chat_message):
         LLMからの回答
     """
     # LLMのオブジェクトを用意
+    # シンプルに環境変数 (OPENAI_API_KEY) から自動で読み込む形に戻す
     llm = ChatOpenAI(model_name=ct.MODEL, temperature=ct.TEMPERATURE)
 
     # 会話履歴なしでもLLMに理解してもらえる、独立した入力テキストを取得するためのプロンプトテンプレートを作成
