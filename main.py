@@ -113,11 +113,10 @@ with st.sidebar:
             # 説明文（st.infoはそのまま）
             st.info("入力内容と関連性が高い社内文書のありかを検索できます。") 
             
-            # --- 変更箇所：st.code()からカスタムmarkdownへ変更し、折り返しを有効にする ---
-            # 薄灰色 (background-color: #eee) とテキスト折り返し (white-space: pre-wrap) を適用
+            # --- 変更箇所：color: #000; を追加 ---
             st.markdown(
                 """
-                <div style='background-color: #eee; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-break: break-word;'>
+                <div style='background-color: #eee; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-break: break-word; **color: #000;**'>
                 【入力例】 社員の育成方針に関するMTGの議事録
                 </div>
                 """,
@@ -136,11 +135,10 @@ with st.sidebar:
             # 説明文（st.infoはそのまま）
             st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
             
-            # --- 変更箇所：st.code()からカスタムmarkdownへ変更し、折り返しを有効にする ---
-            # 薄灰色 (background-color: #eee) とテキスト折り返し (white-space: pre-wrap) を適用
+            # --- 変更箇所：color: #000; を追加 ---
             st.markdown(
                 """
-                <div style='background-color: #eee; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-break: break-word;'>
+                <div style='background-color: #eee; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-break: break-word; **color: #000;**'>
                 【入力例】 人事部に所属している従業員情報を一覧化して
                 </div>
                 """,
