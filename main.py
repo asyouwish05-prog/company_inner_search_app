@@ -61,7 +61,11 @@ except Exception as e:
 if not "initialized" in st.session_state:
     st.session_state.initialized = True
     logger.info(ct.APP_BOOT_MESSAGE)
-
+    
+# --- 追記：st.session_state.mode の初期化 ---
+# 4. 初期表示の前に mode を定義しておくことで、チャット履歴表示などでのエラーを防ぐ
+if "mode" not in st.session_state:
+    st.session_state.mode = ct.ANSWER_MODE_1 # デフォルトのモードを設定
 
 ############################################################
 # 4. 初期表示
