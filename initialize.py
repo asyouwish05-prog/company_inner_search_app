@@ -119,8 +119,12 @@ def initialize_retriever():
             doc.metadata[key] = adjust_string(doc.metadata[key])
     
     # 埋め込みモデルの用意
-    embeddings = OpenAIEmbeddings()
-    
+    #embeddings = OpenAIEmbeddings()
+    # 修正後: Streamlit SecretsからAPIキーを明示的に渡す
+    embeddings = OpenAIEmbeddings(
+        openai_api_key=os.environ.get("OPENAI_API_KEY")
+    )
+
     # チャンク分割用のオブジェクトを作成
     text_splitter = CharacterTextSplitter(
         chunk_size=500,

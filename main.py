@@ -20,6 +20,16 @@ import components as cn
 # （自作）変数（定数）がまとめて定義・管理されているモジュール
 import constants as ct
 
+#追加
+import os
+
+# --- ここから追加 ---
+# LangChainのデバッグログを有効にする
+# initialize()関数のエラーより前に実行されるように、この位置に置く
+os.environ["LANGCHAIN_TRACING_V2"] = "false"  # トレースを無効化
+os.environ["LANGCHAIN_VERBOSE"] = "true"     # ログを詳細化
+logging.basicConfig(level=logging.DEBUG)     # Pythonの標準ログレベルをDEBUGに設定
+# --- ここまで追加 ---
 
 ############################################################
 # 2. 設定関連
