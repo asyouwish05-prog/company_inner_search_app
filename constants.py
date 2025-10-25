@@ -126,5 +126,5 @@ DISP_ANSWER_ERROR_MESSAGE = "回答表示に失敗しました。"
 # RAG (検索拡張生成) & ドキュメント処理設定
 # ==========================================
 RAG_RETRIEVAL_K = 5       # RAG検索数
-CHUNK_SIZE = 500          # ドキュメント分割のチャンクサイズ
-CHUNK_OVERLAP = 50        # チャンク間の重複サイズ 
+CHUNK_SIZE = 800          # ドキュメント分割のチャンクサイズ
+CHUNK_OVERLAP = 150        # チャンク間の重複サイズ

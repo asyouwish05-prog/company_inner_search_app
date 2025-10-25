@@ -18,6 +18,9 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_community.document_loaders import DirectoryLoader, UnstructuredFileLoader
+from langchain.schema import Document
+from langchain_community.document_loaders import TextLoader, UnstructuredFileLoader
 import constants as ct
 
 
@@ -137,7 +140,8 @@ def initialize_retriever():
     text_splitter = CharacterTextSplitter(
         chunk_size=ct.CHUNK_SIZE,
         chunk_overlap=ct.CHUNK_OVERLAP,
-        separator="\n"
+        length_function=len,
+    separators=["\n\n", "\n", " ", ""], # 必要に応じてセパレータも調整
     )
 
     # チャンク分割を実施
@@ -163,32 +167,87 @@ def initialize_session_state():
         # 「LLMとのやりとり用」の会話ログを順次格納するリストを用意
         st.session_state.chat_history = []
 
+def load_files_with_robust_loader(data_path):
+    """
+    ファイルタイプに応じてローダーを切り替え、メタデータを強化してドキュメントを読み込む。
+    """
+    all_documents = []
+    
+    # 表データを含む可能性の高いファイル拡張子
+    complex_file_extensions = ('.pdf', '.xlsx', '.docx', '.pptx', '.doc')
+    
+    for dirpath, dirnames, filenames in os.walk(data_path):
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            
+            # 隠しファイルや一時ファイルをスキップ
+            if filename.startswith('.') or filename.endswith('~'):
+                continue
+            
+            # 拡張子に基づきローダーを決定
+            if file_path.lower().endswith(complex_file_extensions):
+                # UnstructuredFileLoader を使用（表データを扱いやすくする）
+                loader = UnstructuredFileLoader(file_path)
+            elif file_path.lower().endswith(('.txt', '.csv', '.md', '.html', '.json')):
+                # シンプルなテキストファイルには TextLoader を使用
+                loader = TextLoader(file_path, encoding='utf-8')
+            else:
+                # サポートされていないファイルはスキップ
+                continue
+                
+            try:
+                docs = loader.load()
+                
+                # ★★★ メタデータにファイルパスとファイル名を強制的に付与 ★★★
+                for doc in docs:
+                    doc.metadata['source'] = file_path
+                    doc.metadata['file_name'] = filename # ファイル名からの検索を強化
+                    
+                    # (オプション) PDFページ番号をユーザー向けに +1 して格納
+                    if file_path.lower().endswith('.pdf') and 'page' in doc.metadata:
+                        doc.metadata['page_number_display'] = doc.metadata['page'] + 1
+                    
+                all_documents.extend(docs)
+                
+            except Exception as e:
+                logger = logging.getLogger(ct.LOGGER_NAME)
+                logger.error(f"Error loading {file_path}: {e}")
+                continue
+
+    return all_documents
 
 def load_data_sources():
     """
-    RAGの参照先となるデータソースの読み込み
-
-    Returns:
-        読み込んだ通常データソース
+    RAGの参照先となるデータソースの読み込み (ファイルとWebページ)
     """
-    # データソースを格納する用のリスト
-    docs_all = []
-    # ファイル読み込みの実行（渡した各リストにデータが格納される）
-    recursive_file_check(ct.RAG_TOP_FOLDER_PATH, docs_all)
+    
+    # 既存のファイル読み込みロジック（recursive_file_checkの呼び出し）を削除し、
+    # 新しい堅牢なファイル読み込み関数に置き換え
+    
+    # 【修正箇所 START】
+    # 以下の2行を削除またはコメントアウト:
+    # docs_all = []
+    # recursive_file_check(ct.RAG_TOP_FOLDER_PATH, docs_all)
+    
+    # 新しいファイル読み込み関数を呼び出し
+    files_docs = load_files_with_robust_loader(ct.RAG_TOP_FOLDER_PATH) 
+    # 【修正箇所 END】
 
     web_docs_all = []
-    # ファイルとは別に、指定のWebページ内のデータも読み込み
-    # 読み込み対象のWebページ一覧に対して処理
+    # Webページ読み込みロジックはそのまま残す
     for web_url in ct.WEB_URL_LOAD_TARGETS:
         # 指定のWebページを読み込み
         loader = WebBaseLoader(web_url)
         web_docs = loader.load()
         # for文の外のリストに読み込んだデータソースを追加
         web_docs_all.extend(web_docs)
-    # 通常読み込みのデータソースにWebページのデータを追加
-    docs_all.extend(web_docs_all)
+    
+    # ファイルとWebのデータを結合
+    # 変数名を docs_all から files_docs に変えたため、結合先も files_docs に変更
+    files_docs.extend(web_docs_all)
 
-    return docs_all
+    # 最終的な結合済みドキュメントリストを返す
+    return files_docs
 
 
 def recursive_file_check(path, docs_all):

@@ -13,6 +13,7 @@ from langchain.schema import HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.retrievers.multi_query import MultiQueryRetriever # ★追記
 import constants as ct
 
 
@@ -97,10 +98,23 @@ def get_llm_response(chat_message):
             ("human", "{input}")
         ]
     )
+    # -------------------------------------------------------------
+    # ★★★ ここに Multi-Query Retriever の導入ロジックを挿入 ★★★
+    # -------------------------------------------------------------
+    
+    # 1. Multi-Query Retrieverのインスタンスを作成
+    #    既存の st.session_state.retriever をベースにする
+    base_retriever = st.session_state.retriever
+    
+    # temperature=0 の LLM を使用して、ユーザーの質問を複数の検索クエリに書き換えさせる
+    multi_query_retriever = MultiQueryRetriever.from_llm(
+        retriever=base_retriever,
+        llm=llm, # 回答生成と同じ llm (ChatOpenAI) を使用
+    )
 
     # 会話履歴なしでもLLMに理解してもらえる、独立した入力テキストを取得するためのRetrieverを作成
     history_aware_retriever = create_history_aware_retriever(
-        llm, st.session_state.retriever, question_generator_prompt
+        llm, multi_query_retriever, question_generator_prompt # ★ ここを multi_query_retriever に変更
     )
 
     # LLMから回答を取得する用のChainを作成
