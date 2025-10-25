@@ -15,7 +15,8 @@ import unicodedata
 import streamlit as st
 from docx import Document
 from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import CharacterTextSplitter
+# CharacterTextSplitterではなく、RecursiveCharacterTextSplitterを使用
+from langchain.text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredFileLoader
@@ -141,7 +142,7 @@ def initialize_retriever():
         chunk_size=ct.CHUNK_SIZE,
         chunk_overlap=ct.CHUNK_OVERLAP,
         length_function=len,
-    separators=["\n\n", "\n", " ", ""], # 必要に応じてセパレータも調整
+    #separators=["\n\n", "\n", " ", ""], # 必要に応じてセパレータも調整
     )
 
     # チャンク分割を実施
