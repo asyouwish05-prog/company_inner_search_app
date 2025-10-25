@@ -121,22 +121,45 @@ def display_search_llm_response(llm_response):
     Returns:
         LLMからの回答を画面表示用に整形した辞書データ
     """
-    # LLMからのレスポンスに参照元情報が入っており、かつ「該当資料なし」が回答として返された場合
+
+    # LLMからのレスポンスに参照元情報が入っており、かつ「該当資料なし」が回答として返されなかった場合
     if llm_response["context"] and llm_response["answer"] != ct.NO_DOC_MATCH_ANSWER:
 
         # ==========================================
         # ユーザー入力値と最も関連性が高いメインドキュメントのありかを表示
         # ==========================================
         main_file_path = llm_response["context"][0].metadata["source"]
-        
-        # ページ番号の取得と整形
+        # ページ番号またはタイトルの取得と整形
         main_page_number = None
         main_page_suffix = ""
-        # PDFファイルかつページ番号がある場合
-        if main_file_path.lower().endswith('.pdf') and "page" in llm_response["context"][0].metadata:
-            main_page_number = llm_response["context"][0].metadata["page"]
-            main_page_suffix = f" (P.{main_page_number + 1})" 
+        metadata = llm_response["context"][0].metadata # メタデータを変数に格納
         
+        # 1. Webサイトの「タイトル」をチェックするロジックを優先
+        # PDFファイルではなく、かつ「title」キーがある場合
+        if not main_file_path.lower().endswith('.pdf') and "title" in metadata:
+            display_title = metadata["title"]
+            # タイトルが長い場合は短縮し、参照元として表示
+            main_page_suffix = f" (参照元: {display_title[:50]}...)" if len(display_title) > 50 else f" (参照元: {display_title})"
+
+        # 2. PDFファイルの場合: ページ番号のロジックを実行
+        elif main_file_path.lower().endswith('.pdf'):
+            # ページ番号を示す可能性のあるキーを順にチェック (page, page_number に加えて pagenum なども)
+            for key in ["page", "page_number", "pagenum", "loc"]:
+                if key in metadata:
+                    try:
+                        # 取得したページ番号を整数に変換を試みる
+                        # main_page_number は0始まりのまま格納する
+                        main_page_number = int(metadata[key])
+                        
+                        # 表示は +1 して1始まりで
+                        display_page = main_page_number + 1
+                        
+                        main_page_suffix = f" (P.{display_page})"
+                        break # ページ番号が見つかったのでループを終了
+                    except ValueError:
+                        # キーがあっても数値でない場合はスキップ
+                        continue
+
         # 補足メッセージの表示
         main_message = "入力内容に関する情報は、以下のファイルに含まれている可能性があります。"
         st.markdown(main_message)
@@ -171,8 +194,20 @@ def display_search_llm_response(llm_response):
             sub_choice = {"source": sub_file_path}
             
             # PDFファイルかつページ番号がある場合
-            if sub_file_path.lower().endswith('.pdf') and "page" in document.metadata:
-                sub_page_number = document.metadata["page"]
+            # サブドキュメントのページ番号は、main_page_numberと同様に複数キーをチェックするロジックを適用しても良いが、
+            # シンプルにするため、ここでは一旦 'page' キーのみチェックを維持する
+            sub_page_number = None
+            if sub_file_path.lower().endswith('.pdf'):
+                 # ページ番号を示す可能性のあるキーを順にチェック
+                for key in ["page", "page_number", "pagenum", "loc"]:
+                    if key in document.metadata:
+                        try:
+                            sub_page_number = int(document.metadata[key])
+                            break # ページ番号が見つかったら終了
+                        except ValueError:
+                            continue
+                            
+            if sub_page_number is not None:
                 sub_choice["page_number"] = sub_page_number # ページ番号は0始まりのまま格納
             
             # 後ほど一覧表示するため、サブドキュメントに関する情報を順次リストに追加
@@ -243,7 +278,7 @@ def display_contact_llm_response(llm_response):
     # LLMからの回答を表示
     st.markdown(llm_response["answer"])
 
-    # ユーザーの質問・要望に適切な回答を行うための情報が、社内文書のデータベースに存在しなかった場合
+    # ユーザーの質問・要求に適切な回答を行うための情報が、社内文書のデータベースに存在しなかった場合
     if llm_response["answer"] != ct.INQUIRY_NO_MATCH_ANSWER:
         # 区切り線を表示
         st.divider()
@@ -266,11 +301,21 @@ def display_contact_llm_response(llm_response):
 
             # ページ番号の取得と整形
             page_suffix = ""
-            # PDFファイルかつページ番号がある場合
-            if file_path.lower().endswith('.pdf') and "page" in document.metadata:
-                page_number = document.metadata["page"]
-                # ページ番号は0始まりのため、+1して表示
-                page_suffix = f" (P.{page_number + 1})"
+            # PDFファイルの場合
+            if file_path.lower().endswith('.pdf'):
+                metadata = document.metadata
+                # ページ番号を示す可能性のあるキーを順にチェック
+                for key in ["page", "page_number", "pagenum", "loc"]:
+                    if key in metadata:
+                        try:
+                            # 取得したページ番号を整数に変換を試みる
+                            page_number = int(metadata[key])
+                            
+                            # 表示は +1 して1始まりで
+                            page_suffix = f" (P.{page_number + 1})"
+                            break # ページ番号が見つかったら終了
+                        except ValueError:
+                            continue
                 
             # 「ファイルパス」と「ページ番号」を結合
             file_info = f"{file_path}{page_suffix}"
