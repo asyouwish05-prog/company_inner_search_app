@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 from uuid import uuid4
 import sys
 import unicodedata
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import streamlit as st
 from docx import Document
 from langchain_community.document_loaders import WebBaseLoader
@@ -25,7 +25,7 @@ import constants as ct
 # 設定関連
 ############################################################
 # 「.env」ファイルで定義した環境変数の読み込み
-load_dotenv()
+#load_dotenv()
 
 
 ############################################################
