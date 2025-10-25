@@ -15,8 +15,9 @@ import unicodedata
 import streamlit as st
 from docx import Document
 from langchain_community.document_loaders import WebBaseLoader
-# CharacterTextSplitterではなく、RecursiveCharacterTextSplitterを使用
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# RecursiveCharacterTextSplitterだけでなく、
+# コードのどこかでまだ参照されている可能性があるため、CharacterTextSplitterもimportに追加します。
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredFileLoader
