@@ -32,7 +32,10 @@ logging.basicConfig(level=logging.DEBUG)     # Pythonの標準ログレベルを
 # --- PDFminerのログ抑制 (新たに追加) ---
 # pdfminer.six のログレベルを WARNING に設定し、大量のDEBUG出力を抑制
 logging.getLogger("pdfminer").setLevel(logging.WARNING)
-# --- ここまで追加 ---
+# --- ここから追記 ---
+# watchdog のログレベルを WARNING に設定し、大量のDEBUG出力を抑制
+logging.getLogger("watchdog").setLevel(logging.WARNING)
+# --- ここまで追記 ---
 
 ############################################################
 # 2. 設定関連
