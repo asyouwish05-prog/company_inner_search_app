@@ -43,3 +43,6 @@ openai>=1.58.1,<2.0.0
 tiktoken==0.7.0
 
 python-docx==0.8.11
+
+# ... (既存のパッケージリスト)
+docx2txt==0.8
