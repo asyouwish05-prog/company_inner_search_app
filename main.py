@@ -61,7 +61,7 @@ except Exception as e:
 if not "initialized" in st.session_state:
     st.session_state.initialized = True
     logger.info(ct.APP_BOOT_MESSAGE)
-    
+
 # --- 追記：st.session_state.mode の初期化 ---
 # 4. 初期表示の前に mode を定義しておくことで、チャット履歴表示などでのエラーを防ぐ
 if "mode" not in st.session_state:
@@ -126,7 +126,7 @@ with st.sidebar:
 # --------------------------------------------------------------------------------
 
 # ウェルカムメッセージ (薄緑の背景: st.success を使用)
-st.success(ct.WELCOME_MESSAGE)
+st.success(f"{ct.DOC_SOURCE_ICON}{ct.WELCOME_MESSAGE}")
 
 # 注意書き (薄黄色の背景: st.warning を使用)
 st.warning(f"{ct.WARNING_ICON} {ct.INPUT_HINT_MESSAGE}")
