@@ -67,13 +67,65 @@ if not "initialized" in st.session_state:
 # 4. 初期表示
 ############################################################
 # タイトル表示
-cn.display_app_title()
+#cn.display_app_title()
 
 # モード表示
-cn.display_select_mode()
+#cn.display_select_mode()
 
 # AIメッセージの初期表示
-cn.display_initial_ai_message()
+#cn.display_initial_ai_message()
+
+# タイトル表示
+cn.display_app_title()
+
+# --------------------------------------------------------------------------------
+# 【サイドバーの構成】
+# --------------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("## 利用目的")
+
+    # 利用目的の選択肢をラジオボタンで表示
+    selected_mode = st.radio(
+        "モードを選択してください",
+        [ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
+        key="sidebar_selected_mode",
+        label_visibility="collapsed"
+    )
+    # セッションステートに保存
+    st.session_state.mode = selected_mode
+
+    # 横線を追加
+    st.markdown("---")
+
+    # モードごとの説明を表示
+    if st.session_state.mode == ct.ANSWER_MODE_1:
+        st.markdown(
+            """
+            **【「社内文書検索」を選択した場合】**
+
+            入力内容と関連性が高い**社内文書のありか**を検索できます。
+            **【入力例】** `社員の育成方針に関するMTGの議事録`
+            """
+        )
+    elif st.session_state.mode == ct.ANSWER_MODE_2:
+        st.markdown(
+            """
+            **【「社内問い合わせ」を選択した場合】**
+
+            質問・要望に対して、社内文書の情報をもとに**回答を得られます**。
+            **【入力例】** `人事部に所属している従業員情報を一覧化して`
+            """
+        )
+
+# --------------------------------------------------------------------------------
+# 【メイン画面のメッセージ】 (cn.display_initial_ai_message() の内容を置き換え)
+# --------------------------------------------------------------------------------
+
+# ウェルカムメッセージ (薄緑の背景: st.success を使用)
+st.success(ct.WELCOME_MESSAGE)
+
+# 注意書き (薄黄色の背景: st.warning を使用)
+st.warning(f"{ct.WARNING_ICON} {ct.INPUT_HINT_MESSAGE}")
 
 
 ############################################################
