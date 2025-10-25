@@ -28,6 +28,9 @@ import os
 # initialize()関数のエラーより前に実行されるように、この位置に置く
 os.environ["LANGCHAIN_TRACING_V2"] = "false"  # トレースを無効化
 os.environ["LANGCHAIN_VERBOSE"] = "true"     # ログを詳細化
+# --- ChromaDBのテレメトリー無効化を追記---
+os.environ["CHROMA_SERVER_NO_TELEMETRY"] = "true"
+# ----------------------------------------------------
 logging.basicConfig(level=logging.DEBUG)     # Pythonの標準ログレベルをDEBUGに設定
 # --- PDFminerのログ抑制 (新たに追加) ---
 # pdfminer.six のログレベルを WARNING に設定し、大量のDEBUG出力を抑制

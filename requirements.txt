@@ -52,3 +52,4 @@ chromadb==0.4.24
 # requirements.txt のどこかに追加
 unstructured[all-docs]
 python-docx
+extract-msg
