@@ -47,4 +47,4 @@ python-docx==0.8.11
 # ... (既存のパッケージリスト)
 docx2txt==0.8
 
-pymupdf==1.22.5
+pymupdf==1.24.10
