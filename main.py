@@ -29,6 +29,9 @@ import os
 os.environ["LANGCHAIN_TRACING_V2"] = "false"  # トレースを無効化
 os.environ["LANGCHAIN_VERBOSE"] = "true"     # ログを詳細化
 logging.basicConfig(level=logging.DEBUG)     # Pythonの標準ログレベルをDEBUGに設定
+# --- PDFminerのログ抑制 (新たに追加) ---
+# pdfminer.six のログレベルを WARNING に設定し、大量のDEBUG出力を抑制
+logging.getLogger("pdfminer").setLevel(logging.WARNING)
 # --- ここまで追加 ---
 
 ############################################################
