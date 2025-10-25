@@ -34,17 +34,6 @@ zstandard==0.23.0
 # Streamlit 関連
 streamlit==1.39.0
 
-<<<<<<< HEAD
-# LangChain 関連
-langchain==0.3.7
-langchain-core==0.3.17
-langchain-community==0.3.6
-langchain-openai==0.3.3
-openai==1.52.0
-tiktoken==0.7.0
-
-
-=======
 # LangChain 関連（互換性のある範囲指定）
 langchain>=0.3.7,<0.4.0
 langchain-core>=0.3.33,<0.4.0
@@ -52,10 +41,3 @@ langchain-community>=0.3.6,<0.4.0
 langchain-openai>=0.3.3,<0.4.0
 openai>=1.58.1,<2.0.0
 tiktoken==0.7.0
-
-
-
-
-
-
->>>>>>> 87345d2c (Apply dependency fixes for Streamlit deployment)
