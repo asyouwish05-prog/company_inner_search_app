@@ -51,3 +51,4 @@ beautifulsoup4==4.12.3
 chromadb==0.4.24
 # requirements.txt のどこかに追加
 unstructured[all-docs]
+python-docx
